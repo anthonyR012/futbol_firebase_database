@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "909618922146",
+    "project_id": "tikects-a1bf8",
+    "storage_bucket": "tikects-a1bf8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:909618922146:android:a638936b4fcab9f7ab0dfb",
+        "android_client_info": {
+          "package_name": "com.example.firestore"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "909618922146-s275rpb5fudrkjs46fbht6p6q2fa6np8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD1SkA4_9ph3tKI-iE69paXnc5-jPdiQbo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "909618922146-s275rpb5fudrkjs46fbht6p6q2fa6np8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
