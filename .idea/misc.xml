@@ -4,8 +4,13 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="app/src/main/res/drawable/btn_accept_border_item.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_person.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/inputborderitems.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_create.xml" value="0.1671195652173913" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.18" />
+        <entry key="app/src/main/res/layout/crear_persona.xml" value="0.15" />
+        <entry key="app/src/main/res/layout/create_partido.xml" value="0.22" />
+        <entry key="app/src/main/res/layout/floating_btn.xml" value="0.1" />
         <entry key="app/src/main/res/layout/item_partido.xml" value="0.22" />
       </map>
     </option>

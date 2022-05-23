@@ -1,5 +1,6 @@
 package com.example.firestore.list;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,11 +20,12 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 
-public class AdapterPartidos extends RecyclerView.Adapter<AdapterPartidos.ViewHolderClient> {
+public class AdapterPartidos extends RecyclerView.Adapter<AdapterPartidos.ViewHolderClient> implements View.OnClickListener {
     List<PartidosModel> partidos;
     List<PartidosModel> partidosOriginal;
+    private View.OnClickListener listener;
 
-    public AdapterRecycleClient(List<PartidosModel> partidos) {
+    public AdapterPartidos(List<PartidosModel> partidos) {
         //CONTRUCTOR QUE RECIBE LISTA Y LA GUARDA EN DOS LISTAS DISTINTAS
         this.partidos = partidos;
         partidosOriginal = new ArrayList<>();
@@ -36,6 +38,7 @@ public class AdapterPartidos extends RecyclerView.Adapter<AdapterPartidos.ViewHo
         //INFLAMOS VISTA DEL LAYOUT
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_partido,null,false);
+        view.setOnClickListener(this);
         return new ViewHolderClient(view);
     }
 
@@ -50,6 +53,9 @@ public class AdapterPartidos extends RecyclerView.Adapter<AdapterPartidos.ViewHo
 
     }
 
+    public void setOnclikListener(View.OnClickListener listener){
+        this.listener=listener;
+    }
 
     private void verifiedString(String txtSearch) {
         //MIDE LONGITUD DE CADENA Y REALIZA BUSQUEDA EN RECYCLE
@@ -88,30 +94,34 @@ public class AdapterPartidos extends RecyclerView.Adapter<AdapterPartidos.ViewHo
         return partidos.size();
     }
 
+    @Override
+    public void onClick(View v) {
+        if (listener!=null){
+            listener.onClick(v);
+        }
+    }
 
 
     public class ViewHolderClient extends RecyclerView.ViewHolder {
-        TextView idItem;
-        TextView countItem;
-        TextView nameItem;
-        TextView phoneItem;
+        TextView oponente;
+        TextView placeId;
+        TextView rival;
+
 
         public ViewHolderClient(@NonNull View itemView) {
             super(itemView);
-//            idItem = itemView.findViewById(R.id.IdClientDetail);
-//            countItem = itemView.findViewById(R.id.countLender);
-//            nameItem = itemView.findViewById(R.id.nameClientDetail);
-//            phoneItem  = itemView.findViewById(R.id.phoneClientDetail);
+            oponente = itemView.findViewById(R.id.oponente);
+            placeId = itemView.findViewById(R.id.placeId);
+            rival = itemView.findViewById(R.id.rival);
+
+
 
         }
 
-        public void AsignarDatos(ClientePrestamos cliente) {
-
-            int count = cliente.prestamos.size();
-            idItem.setText(""+cliente.cliente.id_cliente_pk);
-            countItem.setText("Total Prestamos "+count);
-            nameItem.setText(cliente.cliente.getNombre_cliente()+" "+cliente.cliente.getApellido_cliente());
-            phoneItem.setText(cliente.cliente.getTelefono_cliente());
+        public void AsignarDatos(PartidosModel partidos) {
+            rival.setText(partidos.getRival());
+            oponente.setText(partidos.getOponente());
+            placeId.setText(partidos.getHora()+" "+partidos.getFecha()+" en "+partidos.getLugar());
 
 
         }

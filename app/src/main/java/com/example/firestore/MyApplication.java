@@ -11,8 +11,8 @@ public class MyApplication extends Application {
 
     @Override
     public void onCreate() {
-        FirebaseApp.initializeApp(this);
-        db = FirebaseFirestore.getInstance();
+        FirebaseApp.initializeApp(getApplicationContext());
+
         super.onCreate();
 
     }
