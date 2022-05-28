@@ -79,8 +79,10 @@ public class Create extends AppCompatActivity {
     }
 
     private void crearPartido() {
+        int valorEntero = (int) Math.floor(Math.random()*(10-9000+1)+9000);
+
         Map<String,Object>  map = new HashMap<>();
-        String id = hora.getText().toString()+""+new Random(4234).toString();
+        String id = hora.getText().toString()+""+valorEntero;
         map.put("id",id);
         map.put("lugar",lugar.getText().toString());
         map.put("oponente",oponente.getText().toString());

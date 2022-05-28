@@ -20,8 +20,7 @@ import com.example.firestore.R;
 import com.example.firestore.models.PartidosModel;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.FirebaseApp;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -129,7 +128,14 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton("ACEPTAR TICKET", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        showAlert(partidosLista.get(index).getId());
+                        Log.i("partidoRegistra",partidosLista.get(index).getId());
+                        showAlert(partidosLista.get(index).getId(),partidosLista.get(index));
+                    }
+                })
+                .setNeutralButton("ASISTENCIA", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        showAlertThree(partidosLista.get(index).getId());
                     }
                 })
                 .setNegativeButton("CANCELAR ", new DialogInterface.OnClickListener() {
@@ -142,8 +148,68 @@ public class MainActivity extends AppCompatActivity {
                 .create().show();
 
     }
+    String messageShowThree = "";
+    int length = 0;
+    private void showAlertThree(String id) {
 
-    private void showAlert(String id_partido){
+        Task<QuerySnapshot> partidos = MyApplication.db.collection("matrizPartidos").whereEqualTo("id_partido", id).get();
+        partidos.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+
+                ArrayList<String> id_user = new ArrayList();
+                length = queryDocumentSnapshots.getDocumentChanges().size();
+                for (int i = 0; i <length ;i++){
+                    final int count = i;
+
+                    id_user.add(queryDocumentSnapshots.getDocumentChanges().get(i).getDocument().get("id_usuario").toString());
+                    Log.i("id_user",id_user.get(i));
+                }
+                if(!id_user.isEmpty()){
+                    Task<QuerySnapshot> user = MyApplication.db.collection("users").whereIn("id",id_user ).get();
+                    user.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+
+
+
+                            for(int i = 0 ; i < queryDocumentSnapshots.getDocumentChanges().size();i++){
+                                messageShowThree += queryDocumentSnapshots.getDocumentChanges().get(i).getDocument().get("name").toString();
+                                messageShowThree += "\n";
+                                Log.i("nombres",queryDocumentSnapshots.getDocumentChanges().get(i).getDocument().get("name").toString());
+                            }
+                            showAlertTwo("ASISTENCIA PARTIDO ",messageShowThree);
+
+
+                        }
+                    });
+                }else{
+                    showAlertTwo("ASISTENCIA PARTIDO ","No hay nadie registrado en este partido");
+                }
+
+
+            }
+        });
+//        ArrayList id_usu =  new ArrayList<>();
+//        MyApplication.db.collection("partidos").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//            @Override
+//            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+//
+//                for(int i = 0; i < queryDocumentSnapshots.getDocumentChanges().size(); i++){
+//                    if(queryDocumentSnapshots.getDocumentChanges().get(i).getDocument().get("id_partido").toString().equals(id)){
+//                        id_usu.add(queryDocumentSnapshots.getDocumentChanges().get(i).getDocument().get("id_usuario").toString());
+//                    }
+//
+//                }
+//
+//
+//
+//            }
+//        });
+
+    }
+
+    private void showAlert(String id_partido, PartidosModel partidosModel){
         final EditText inputUbicacion = new EditText(MainActivity.this);
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
         alertDialog.setTitle("Estas a un paso de estar registrado");
@@ -172,15 +238,24 @@ public class MainActivity extends AppCompatActivity {
                         public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                             if(!queryDocumentSnapshots.isEmpty()){
                                 Map<String,Object>  map = new HashMap<>();
-
+                                int valorEntero = (int) Math.floor(Math.random()*(10-9000+1)+9000);
                                 map.put("id_usuario",idDocument);
                                 map.put("id_partido",id_partido);
                                 QueryDocumentSnapshot user = queryDocumentSnapshots.getDocumentChanges().get(0).getDocument();
 
-                                MyApplication.db.collection("matrizPartidos").document(id_partido).set(map).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                MyApplication.db.collection("matrizPartidos").document(String.valueOf(valorEntero)).set(map).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void unused) {
-                                        showAlertTwo("Felicidades!!",user.get("name")+" has quedado registrado para este partido");
+
+                                        String message = "Señor "+user.get("name")+" C.C "+user.get("id")+"\n"+
+                                                "Correo: "+user.get("email")+"\n"+
+                                                "Celular: "+user.get("celular")+"\n"+
+                                                "Usted ha quedado registrado satisfactoriamente: \n"+
+                                                partidosModel.getOponente()+" VS "+partidosModel.getRival()+"\n"+
+                                                "Hora inicio: "+partidosModel.getHora()+" Fecha: "+partidosModel.getFecha();
+
+
+                                        showAlertTwo("Felicidades!!",message);
                                     }
                                 });
 
@@ -202,7 +277,7 @@ public class MainActivity extends AppCompatActivity {
                     });
 
                 }else{
-                    showAlert(id_partido);
+                    showAlert(id_partido, partidosModel);
                 }
             }
         });
@@ -226,29 +301,16 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
+                        length = 0;
+                        messageShowThree = "";
                     }
                 })
                 .setCancelable(false)
                 .create().show();
+
+
     }
 
 
-    private void ejecuteDatabase() {
 
-        Map<String,Object>  map = new HashMap<>();
-        map.put("id","a1");
-        map.put("name","anthony");
-        map.put("email","emali@example.com");
-        map.put("password","12345");
-
-        MyApplication.db.collection("users").document("a1").set(map).addOnSuccessListener(
-                new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        Toast.makeText(MainActivity.this, "Se registro la informacion", Toast.LENGTH_SHORT).show();
-                    }
-                }
-        );
-
-    }
 }
